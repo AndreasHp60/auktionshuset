@@ -39,7 +39,6 @@ public class CustomerController : ControllerBase
   [HttpGet(Name = "GetCustomerById")] 
   public Customer Get(int customerId) 
   { 
-      return _customers.Where(c => c.Id == customerId).First(); 
+      return _customers.Where(c => c.Id == customerId).First();
   } 
-  
 }
