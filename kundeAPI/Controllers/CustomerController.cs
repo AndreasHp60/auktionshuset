@@ -25,8 +25,8 @@ public class CustomerController : ControllerBase
         collection = database.GetCollection<Customer>("User");
     }
 
-  [HttpGet("GetCustomers")] 
-  public List <Customer> Get() 
+[HttpGet("GetCustomers")] 
+public List <Customer> Get() 
   { 
     _ilogger.LogInformation("Customers fetched:");
     var document = collection.Find(new BsonDocument()).ToList();
@@ -34,8 +34,8 @@ public class CustomerController : ControllerBase
     return document.ToList();
   }
 
-  [HttpGet("GetCustomerByEmail")] 
-  public Customer GetByEmail(string customerEmail) 
+[HttpGet("GetCustomerByEmail")] 
+public Customer GetByEmail(string customerEmail) 
   { 
     _ilogger.LogInformation("Customer fetched:");
     var document = collection.Find(new BsonDocument()).ToList();
@@ -44,11 +44,28 @@ public class CustomerController : ControllerBase
   }
 
 [HttpPost("createcustomer")]
-      public void CreateCustomer(Customer customer)
-    {
-      _ilogger.LogInformation($"Customer{customer.FirstName} created:");
-        var newCustomer = customer;
-        collection.InsertOne(newCustomer);
+public void CreateCustomer(Customer customer)
+  {
+    _ilogger.LogInformation($"Customer{customer.FirstName} created:");
+      var newCustomer = customer;
+      collection.InsertOne(newCustomer);
 
-    }
+  }
+
+[HttpPut("updateCustomer")]
+public void updateCustomer(Customer customer,string customerEmail)
+  {
+    //hvis ikke man sletter eller ændrer id crasher den!
+    _ilogger.LogInformation($"Customer{customer.Email} have been updated:");
+    var newCustomer = customer;
+    customer = collection.Find(c => c.Email.Equals(customerEmail)).FirstOrDefault();
+    collection.ReplaceOne(c => c.Email.Equals(customerEmail),newCustomer);
+  }
+
+[HttpDelete("deleteCustomer")]
+public void deleteCustomer(string customerEmail)
+  {
+    _ilogger.LogInformation($"Customer{customerEmail} have been deleted:");
+    collection.DeleteOne(c => c.Email.Equals(customerEmail));
+  }
 }

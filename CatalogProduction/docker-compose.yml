@@ -1,0 +1,60 @@
+version: '3.8' 
+ 
+services: 
+    catalog: 
+         image: hnrkjnsn/catalog-svc:latest 
+         container_name: "catalog" 
+         environment: 
+         - CatalogImagePath=/srv/resources/images 
+         - MongoConnectionString=mongodb://root:rootpassword@mongodb:27017/?authSource=admin 
+         - CatalogDatabase=catalog 
+         - CatalogCollection=products 
+         expose: 
+         - "80" 
+         depends_on: 
+         - mongodb 
+         volumes: 
+         - images:/srv/resources/images 
+ 
+    nginx: 
+         image: nginx:latest 
+         domainname: "catalog69420" 
+         container_name: "gateway" 
+         volumes: 
+         - config:/etc/nginx 
+         depends_on: 
+         - catalog 
+         ports: 
+         - "4000:4000" 
+ 
+    mongodb: 
+         image: mongo:latest 
+         command: ["mongod", "--dbpath=/data/mongodb", "--auth", "--bind_ip_all"] 
+    environment: 
+         MONGO_INITDB_ROOT_USERNAME: root 
+         MONGO_INITDB_ROOT_PASSWORD: rootpassword 
+         ports: 
+         - 27017:27017 
+         volumes: 
+         - db:/data/mongodb
+    networks: 
+        default: 
+         driver: bridge 
+         name: catalogsolution 
+ 
+    volumes: 
+     db: 
+         driver: azure_file 
+         driver_opts: 
+         share_name: data 
+         storage_account_name: catalogstorage1 
+     config: 
+         driver: azure_file 
+         driver_opts: 
+         share_name: config 
+         storage_account_name: catalogstorage1 
+     images: 
+         driver: azure_file 
+         driver_opts: 
+         share_name: images 
+         storage_account_name: catalogstorage1
