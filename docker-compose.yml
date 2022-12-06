@@ -1,0 +1,7 @@
+services: 
+  ServiceA: 
+      image: andreashp60/auktionshus:ServiceA
+      ports:  
+      - "8080:80" 
+      environment: 
+      - MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test

@@ -5,14 +5,10 @@ namespace vareAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class VareController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
 
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<VareController> _logger;
 
     private List<Vare> _varene = new List<Vare>() { 
         new Vare() {  
@@ -29,7 +25,7 @@ public class WeatherForecastController : ControllerBase
       } 
   }; 
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public VareController(ILogger<VareController> logger)
     {
         _logger = logger;
     }

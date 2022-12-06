@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CustomerService;
 using System.Linq;
+using MongoDB.Driver;
 
 namespace CustomerService.Controllers;
 
@@ -30,15 +31,29 @@ public class CustomerController : ControllerBase
   }; 
 
     private readonly ILogger<CustomerController> _ilogger;
+    private readonly IConfiguration _config;
+    private readonly IMongoDatabase database;
 
-    public CustomerController(ILogger<CustomerController> logger)
+    private readonly IMongoCollection<Customer> collection;
+
+    public CustomerController(ILogger<CustomerController> logger, IConfiguration config)
     {
         _ilogger = logger;
+        _config = config;
+        MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
+        database = dbClient.GetDatabase("Auktionshus");
+        collection = database.GetCollection<Customer>("User");
     }
 
-  [HttpGet(Name = "GetCustomerById")] 
-  public Customer Get(int customerId) 
+  [HttpGet("GetCustomers")] 
+  public List <Customer> Get() 
   { 
-      return _customers.Where(c => c.Id == customerId).First();
-  } 
+    return _customers.ToList();
+  }
+
+  [HttpGet("GetCustomerById")] 
+  public Customer GetByid(int customerId) 
+  { 
+    return _customers.Where(c => c.Id == customerId).First();
+  }
 }
