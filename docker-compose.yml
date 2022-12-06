@@ -1,6 +1,6 @@
 services: 
-  ServiceA: 
-      image: andreashp60/auktionshus:ServiceA
+  user-service1: 
+      image: andreashp60/auktionshus:user-service
       ports:  
       - "8080:80" 
       environment: 
