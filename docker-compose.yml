@@ -12,4 +12,17 @@ services:
      depends_on: 
      - user-service1
      ports: 
-     - "4000:4000"
+     - "4000:4000"     
+  rabbitmq-dev: 
+     image: rabbitmq:management 
+     ports: 
+     - "15672:15672" 
+     - "5672:5672"
+  sender:
+      image: andreashp60/auktionshus:send
+      ports:
+      - "8081:80"
+  receive:
+      image: andreashp60/auktionshus:receive
+      ports:
+      - "8082:80"
