@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MongoDB.Bson;
-using System.Net;
 
 namespace CustomerService.Controllers;
 
@@ -49,7 +48,6 @@ public void CreateCustomer(Customer customer)
     _ilogger.LogInformation($"Customer{customer.FirstName} created:");
       var newCustomer = customer;
       collection.InsertOne(newCustomer);
-
   }
 
 [HttpPut("updateCustomer")]
