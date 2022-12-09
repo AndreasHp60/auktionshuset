@@ -37,7 +37,7 @@ public class AuctionController : ControllerBase
   }
 
   [HttpPut("ChangeState")]
-  public void ChangeState( string id, int state, double price)
+  public void ChangeState( string id, int state, double price, int durationDays)
   {
     _ilogger.LogInformation("State has been changed");
     Product product = productCollection.Find(c => c.Id.Equals(id)).FirstOrDefault();
@@ -46,7 +46,7 @@ public class AuctionController : ControllerBase
     if(product.State == 3)
     {
         _ilogger.LogInformation("Auction has started!");
-        product.Time = DateTime.Now;
+        product.Time = DateTime.Now.AddDays(durationDays);
     }
     productCollection.ReplaceOne(a => a.Id.Equals(id),product);
   }
