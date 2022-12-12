@@ -1,0 +1,12 @@
+services:    
+  rabbitmq-dev: 
+     image: rabbitmq:management 
+     ports: 
+     - "15672:15672" 
+     - "5672:5672"
+     environment: 
+      - MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test
+  auktionsapi:
+      image: andreashp60/auktionshus:auktionapi
+      ports:
+      - "8081:80"
