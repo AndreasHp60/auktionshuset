@@ -16,7 +16,7 @@ using MongoDB.Bson.Serialization.Attributes;
       [BsonElement("assesment")]
       public double? Assesment { get; set; } 
       [BsonElement("price")]
-      public double? Price { get; set; } 
+      public double Price { get; set; } 
       [BsonElement("minbid")]
       public double? MinBid { get; set; } 
       [BsonElement("time")]

@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
+using System.Text.Json;
 
 namespace AuctionService.Controllers;
 
@@ -15,6 +19,7 @@ public class AuctionController : ControllerBase
     private readonly IMongoDatabase database;
     private readonly IMongoCollection<Customer> customerCollection;
     private readonly IMongoCollection<Product> productCollection;
+    private string _nextID;
 
      public AuctionController(ILogger<AuctionController> logger, IConfiguration config)
     {
@@ -68,4 +73,71 @@ public class AuctionController : ControllerBase
     
   }
 
+  [HttpPost("Sendbid")]
+  public void Sendbid(Productdto product){
+        
+          var factory = new ConnectionFactory() { HostName = "localhost" };
+        using (var connection = factory.CreateConnection())
+        using (var channel = connection.CreateModel())
+        {
+            channel.QueueDeclare(queue: "products",
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+            var body = JsonSerializer.SerializeToUtf8Bytes(product);
+
+            channel.BasicPublish(exchange: "",
+                                 routingKey: "products",
+                                 basicProperties: null,
+                                 body: body);
+            Console.WriteLine(" [x] Sent {0}");
+        }
+
+        Console.WriteLine(" Press [enter] to exit.");
+  }
+
+  [HttpGet("Getbid")]
+
+  public void Receivebid(){
+        _ilogger.LogDebug($"Starting bid");
+        var factory = new ConnectionFactory() { HostName = "localhost" };
+        using (var connection = factory.CreateConnection())
+        using (var channel = connection.CreateModel())
+        {
+          _ilogger.LogDebug($"Processing bid from  ");
+            channel.QueueDeclare(queue: "products",
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+            var consumer = new EventingBasicConsumer(channel);
+                consumer.Received += (model, ea) =>
+                {
+                  _ilogger.LogDebug($"Processing bid");
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
+                    Productdto? dto = JsonSerializer.Deserialize<Productdto>(message);
+
+                      if (dto != null)
+                        {
+                            _ilogger.LogInformation($"Processing bid {dto.Id} from  ");
+
+                            MakeBid(dto.Id, dto.Price);
+                            
+                        } else {
+                            _ilogger.LogWarning($"Could not deserialize message with body: {message}");
+                        }
+                    Console.WriteLine(" [x] Received {0}", message);
+                };
+
+            channel.BasicConsume(queue: "products",
+                                 autoAck: true,
+                                 consumer: consumer);
+
+            Console.WriteLine("bid complet");
+   }
+  }
 }
