@@ -6,7 +6,15 @@ services:
      - "5672:5672"
      environment: 
       - MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test
+  worker:
+      image: andreashp60/auktionshus:worker
+      ports:
+      - "8081:80"
+      depends_on:
+      - rabbitmq-dev
   auktionsapi:
       image: andreashp60/auktionshus:auktionapi
       ports:
-      - "8081:80"
+      - "8082:80"
+      depends_on:
+      - rabbitmq-dev

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kundeAPI", "kundeAPI\kundeA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "auktionAPI", "auktionAPI\auktionAPI.csproj", "{5FFFEEB9-F6AC-4E32-A141-06658961E63C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "worker", "worker\worker.csproj", "{0CBD9C28-5B94-42F2-8254-6284B75BC143}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{5FFFEEB9-F6AC-4E32-A141-06658961E63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FFFEEB9-F6AC-4E32-A141-06658961E63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FFFEEB9-F6AC-4E32-A141-06658961E63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CBD9C28-5B94-42F2-8254-6284B75BC143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CBD9C28-5B94-42F2-8254-6284B75BC143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CBD9C28-5B94-42F2-8254-6284B75BC143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CBD9C28-5B94-42F2-8254-6284B75BC143}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
