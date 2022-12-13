@@ -21,6 +21,10 @@ public class ProductController : ControllerBase
     {
         _ilogger = logger;
         _config = config;
+        var hostName = System.Net.Dns.GetHostName(); 
+        var ips = System.Net.Dns.GetHostAddresses(hostName); 
+        var _ipaddr = ips.First().MapToIPv4().ToString(); 
+        _ilogger.LogInformation(1, $"**********ProductController responding from {_ipaddr}**********");
         //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
         MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
         database = dbClient.GetDatabase("Auktionshus");
@@ -31,7 +35,7 @@ public class ProductController : ControllerBase
  [HttpGet("GetProducts")] 
   public List <Product> Get() 
   { 
-    _ilogger.LogInformation("Customers fetched:");
+    _ilogger.LogInformation("**********Products fetched:**********");
     var productDocument = productCollection.Find(new BsonDocument()).ToList();
     productDocument.ToJson();
     return productDocument.ToList();
@@ -40,7 +44,7 @@ public class ProductController : ControllerBase
   [HttpGet("GetProductByEmail")] 
   public Product GetProductByEmail(string customerEmail) 
   { 
-    _ilogger.LogInformation("Customer fetched:");
+    _ilogger.LogInformation($"**********Product fetched by:{customerEmail}**********");
     var productDocument = productCollection.Find(new BsonDocument()).ToList();
     productDocument.ToJson();
     return productDocument.ToList().Where(c => c.customer.Email.Equals(customerEmail)).FirstOrDefault();
@@ -52,7 +56,7 @@ public class ProductController : ControllerBase
   [HttpPost("CreateProduct")]
   public void CreateProduct( Product product, string email, string name, string description, string category, double assesment, double minbid)
   {
-      _ilogger.LogInformation($"Product{product.Name} has been created:");
+      _ilogger.LogInformation($"**********Product{product.Name} has been created:**********");
       Customer customers = customerCollection.Find(c => c.Email.Equals(email)).FirstOrDefault();
       
       product = new Product(){
@@ -69,23 +73,23 @@ public class ProductController : ControllerBase
   }
 
 [HttpPut("updateProduct")]
-  public void updateCustomer(Product product, string customerEmail)
+  public void updateProduct(Product product, string productName)
   {
     //Hvis id er null fejler den
     //Hvis man ikke indsætter id fejler den
     //hvad skal man kunne opdatere?
-    _ilogger.LogInformation($"Customer{product.customer.Email} have been updated:");
+    _ilogger.LogInformation($"**********Product{product.Name} have been updated:**********");
     var newProduct = product;
-    product = productCollection.Find(c => c.customer.Email.Equals(customerEmail)).FirstOrDefault();
-    productCollection.ReplaceOne(c => c.customer.Email.Equals(customerEmail),newProduct);
+    product = productCollection.Find(c => c.Name.Equals(productName)).FirstOrDefault();
+    productCollection.ReplaceOne(c => c.Name.Equals(productName),newProduct);
   }
 
   //tilret
   [HttpDelete("deleteProduct")]
-  public void deleteCustomer(string customerEmail)
+  public void deleteProduct(Product product, string productName)
   {
-    _ilogger.LogInformation($"Customer{customerEmail} have been deleted:");
-    productCollection.DeleteOne(c => c.customer.Email.Equals(customerEmail));
+    _ilogger.LogInformation($"**********Product{product.Name} have been deleted:**********");
+    productCollection.DeleteOne(c => c.Name.Equals(productName));
   }
 
 

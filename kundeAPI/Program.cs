@@ -1,4 +1,12 @@
 using CustomerService;
+using NLog; 
+using NLog.Web;
+
+var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger(); 
+    logger.Debug("init main");
+
+try{  
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +20,11 @@ builder.Services.AddSwaggerGen();
 /*builder.Services.AddMvc()
                 .AddJsonOptions(options => options.SerializerSettings.Converters.Add(new BsonDocumentJsonConverter()));
                 */
+
+
+builder.Logging.ClearProviders(); 
+builder.Host.UseNLog();
+
 
 var app = builder.Build();
 
@@ -29,3 +42,13 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+}
+catch(Exception ex){
+    logger.Error(ex, "Stopped program because of exception"); 
+    throw; 
+}
+finally 
+ { 
+     NLog.LogManager.Shutdown(); 
+ } 

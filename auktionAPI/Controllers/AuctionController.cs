@@ -25,6 +25,10 @@ public class AuctionController : ControllerBase
     {
         _ilogger = logger;
         _config = config;
+        var hostName = System.Net.Dns.GetHostName(); 
+        var ips = System.Net.Dns.GetHostAddresses(hostName); 
+        var _ipaddr = ips.First().MapToIPv4().ToString(); 
+        _ilogger.LogInformation(1, $"**********AuctionController responding from {_ipaddr}**********");
         //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
         MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
         database = dbClient.GetDatabase("Auktionshus");
@@ -35,7 +39,7 @@ public class AuctionController : ControllerBase
  [HttpGet("GetProductsByState")] 
   public List <Product> GetProductsByState(int getState) 
   { 
-    _ilogger.LogInformation($"Products with state {getState} has been fetched");
+    _ilogger.LogInformation($"**********Products with state {getState} has been fetched**********");
     var productDocument = productCollection.Find(new BsonDocument()).ToList();
     productDocument.ToJson();
     return productDocument.Where(a => a.State.Equals(getState)).ToList();
@@ -44,13 +48,13 @@ public class AuctionController : ControllerBase
   [HttpPut("ChangeState")]
   public void ChangeState( string id, int state, double price, int durationDays)
   {
-    _ilogger.LogInformation("State has been changed");
+    _ilogger.LogInformation("**********State has been changed**********");
     Product product = productCollection.Find(c => c.Id.Equals(id)).FirstOrDefault();
     product.State = state;
     product.Price = price;
     if(product.State == 3)
     {
-        _ilogger.LogInformation("Auction has started!");
+        _ilogger.LogInformation("**********Auction has started!**********");
         product.Time = DateTime.Now.AddDays(durationDays);
     }
     productCollection.ReplaceOne(a => a.Id.Equals(id),product);
@@ -71,13 +75,13 @@ public class AuctionController : ControllerBase
                                  arguments: null);
 
             var body = JsonSerializer.SerializeToUtf8Bytes(product);
-            _ilogger.LogInformation("Information serialized");
+            _ilogger.LogInformation("**********Information serialized**********");
 
             channel.BasicPublish(exchange: "",
                                  routingKey: "products",
                                  basicProperties: null,
                                  body: body);
-            _ilogger.LogInformation("Information send");
+            _ilogger.LogInformation("**********Information send**********");
             Console.WriteLine(" [x] Sent {0}");
         }
 

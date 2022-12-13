@@ -20,6 +20,10 @@ public class WorkerController : BackgroundService
     {
         _ilogger = logger;
         _config = config;
+        var hostName = System.Net.Dns.GetHostName(); 
+        var ips = System.Net.Dns.GetHostAddresses(hostName); 
+        var _ipaddr = ips.First().MapToIPv4().ToString(); 
+        _logger.LogInformation(1, $"**********Worker responding from {_ipaddr}**********"); 
         //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
         MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
         database = dbClient.GetDatabase("Auktionshus");
@@ -28,12 +32,12 @@ public class WorkerController : BackgroundService
     }
 
      public void Receivebid(){
-        _ilogger.LogDebug($"Starting bid");
+        _ilogger.LogDebug($"**********Starting bid**********");
         var factory = new ConnectionFactory() { HostName = "rabbitmq-dev" };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
-          _ilogger.LogDebug($"Processing bid from  ");
+          _ilogger.LogDebug($"**********Processing bid from**********");
             channel.QueueDeclare(queue: "products",
                                  durable: false,
                                  exclusive: false,
@@ -43,19 +47,19 @@ public class WorkerController : BackgroundService
             var consumer = new EventingBasicConsumer(channel);
                 consumer.Received += (model, ea) =>
                 {
-                  _ilogger.LogDebug($"Processing bid");
+                  _ilogger.LogDebug($"**********Processing bid{ea}**********");
                     var body = ea.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
                     Productdto? dto = JsonSerializer.Deserialize<Productdto>(message);
 
                       if (dto != null)
                         {
-                            _ilogger.LogInformation($"Processing bid {dto.Id} from  ");
+                            _ilogger.LogInformation($"**********Processing bid {dto.Id} from  **********");
 
                             MakeBid(dto.Id, dto.Price);
                             
                         } else {
-                            _ilogger.LogWarning($"Could not deserialize message with body: {message}");
+                            _ilogger.LogWarning($"**********Could not deserialize message with body: {message}**********");
                         }
                     Console.WriteLine(" [x] Received {0}", message);
                 };
@@ -64,7 +68,7 @@ public class WorkerController : BackgroundService
                                  autoAck: true,
                                  consumer: consumer);
 
-            Console.WriteLine("bid complet");
+            Console.WriteLine("Looking for bid");
    }
   }
   public void MakeBid( string? id,  double? price)
@@ -72,13 +76,13 @@ public class WorkerController : BackgroundService
     Product product = productCollection.Find(c => c.Id.Equals(id)).FirstOrDefault();
     if(price > product.Price)
     {
-      _ilogger.LogInformation("A bid has been made");
+      _ilogger.LogInformation("**********A bid has been made**********");
       product.Price = price;
       productCollection.ReplaceOne(a => a.Id.Equals(id),product);
     }
     else {
       product.Price = product.Price;
-      _ilogger.LogInformation("Your bid is too low");
+      _ilogger.LogInformation("**********Your bid is too low**********");
     }
     
   }
