@@ -15,5 +15,7 @@ using MongoDB.Bson.Serialization.Attributes;
       Price = price;
       Id = id;
     }
+
+    public Productdto(){}
  
   } 

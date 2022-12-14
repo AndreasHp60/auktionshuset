@@ -26,7 +26,7 @@ using MongoDB.Bson.Serialization.Attributes;
       [BsonElement("state")]
       public short? State { get; set; } 
 
-    //[BsonElement("customer")]
-    //public Customer? customer {get; set; }     
+      [BsonElement("customer")]
+      public Customer? customer {get; set; }     
  
   } 
