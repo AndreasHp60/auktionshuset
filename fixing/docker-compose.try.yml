@@ -13,8 +13,26 @@ services:
       depends_on:
       - rabbitmq-dev
   auktionsapi:
-      image: andreashp60/auktionshus:auktionapi
+      image: andreashp60/auktionshus:auktionsapi
       ports:
       - "8082:80"
       depends_on:
       - rabbitmq-dev
+  kundeAPI:
+      image: andreashp60/auktionshus:customer
+      ports:
+      - "8083:80"
+  vareAPI:
+      image: andreashp60/auktionshus:product
+      ports:
+      - "8084:80"
+  nginx: 
+     image: nginx:latest 
+     volumes: 
+     - ./nginx.conf:/etc/nginx/nginx.conf:ro 
+     depends_on: 
+     - auktionsapi
+     - kundeAPI
+     - vareAPI
+     ports: 
+     - "4000:4000"  

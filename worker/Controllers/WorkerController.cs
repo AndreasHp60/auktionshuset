@@ -23,7 +23,7 @@ public class WorkerController : BackgroundService
         var hostName = System.Net.Dns.GetHostName(); 
         var ips = System.Net.Dns.GetHostAddresses(hostName); 
         var _ipaddr = ips.First().MapToIPv4().ToString(); 
-        _ilogger.LogInformation(1, $"**********Worker responding from {_ipaddr}**********"); 
+        _ilogger.LogDebug(1, $"**********Worker responding from {_ipaddr}**********"); 
         //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
         MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
         database = dbClient.GetDatabase("Auktionshus");
@@ -54,14 +54,14 @@ public class WorkerController : BackgroundService
 
                       if (dto != null)
                         {
-                            _ilogger.LogInformation($"Products: {dto.Id} offerings {dto.Price} ");
+                            _ilogger.LogInformation($"**********Products: {dto.Id} offerings {dto.Price} **********");
                             await validate(dto.Id,dto.Price);
                         } 
                         else 
                           {
                             _ilogger.LogWarning($"Could not deserialize message with body: {message}");
                           }
-                    _ilogger.LogInformation($"data recieved: {message}");
+                    _ilogger.LogInformation($"**********data recieved: {message}**********");
                 };
 
             channel.BasicConsume(queue: "products",
@@ -93,12 +93,12 @@ public class WorkerController : BackgroundService
       while(!stoppingToken.IsCancellationRequested)
       {
         try{
-          _ilogger.LogInformation("Connection made");
+          _ilogger.LogInformation("**********Connection made**********");
              Receivebid();
           
         }
         catch(Exception ex){
-          _ilogger.LogDebug("Connection failed");
+          _ilogger.LogDebug("**********Connection failed**********");
         }
         await Task.Delay(1000, stoppingToken);
       }
