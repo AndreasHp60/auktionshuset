@@ -1,3 +1,3 @@
 docker build -t auktionsapi-image -f Dockerfile .
-docker tag auktionapi-image andreashp60/auktionshus:auktionapi
-docker push andreashp60/auktionshus:auktionapi
+docker tag auktionsapi-image marththecreater/auktionshuset:auktionapi
+docker push marththecreater/auktionshuset:auktionapi
