@@ -57,9 +57,12 @@ public class AuctionController : ControllerBase
   }
 
   [HttpPost("Sendbid")]
-  public void Sendbid(Productdto product){
-        
-          var factory = new ConnectionFactory() { HostName = "rabbitmq-dev" };
+  public void Sendbid(string idd, double pricee){
+        var productdto = new Productdto(){
+          Id = idd,
+          Price = pricee
+        };
+        var factory = new ConnectionFactory() { HostName = "rabbitmq-dev" };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         
@@ -70,7 +73,7 @@ public class AuctionController : ControllerBase
                                  autoDelete: false,
                                  arguments: null);
 
-            var body = JsonSerializer.SerializeToUtf8Bytes(product);
+            var body = JsonSerializer.SerializeToUtf8Bytes(productdto);
             _ilogger.LogInformation("Information serialized");
 
             channel.BasicPublish(exchange: "",

@@ -41,7 +41,7 @@ public class WorkerController : BackgroundService
                                  arguments: null);
 
             var consumer = new EventingBasicConsumer(channel);
-                consumer.Received += (model, ea) =>
+                consumer.Received += async (model, ea) =>
                 {
                   _ilogger.LogDebug($"Processing bid");
                     var body = ea.Body.ToArray();
@@ -50,13 +50,19 @@ public class WorkerController : BackgroundService
 
                       if (dto != null)
                         {
-                            _ilogger.LogInformation($"Processing bid {dto.Id} from  ");
-
+                            _ilogger.LogInformation($"Products: {dto.Id} offerings {dto.Price} ");
+                            await validate(dto.Id,dto.Price);
+                            _ilogger.LogInformation($"Products: {dto.Id} offerings {dto.Price} ");    
+                            /*_ilogger.LogInformation($"Processing bid {dto.Id} from  ");
+                            _ilogger.LogInformation($"Product: {dto.Id} offering {dto.Price} ");
                             MakeBid(dto.Id, dto.Price);
-                            
-                        } else {
+                            _ilogger.LogInformation($"Productssss: {dto.Id} offeringsssss {dto.Price} ");
+                            */
+                        } 
+                        else 
+                          {
                             _ilogger.LogWarning($"Could not deserialize message with body: {message}");
-                        }
+                          }
                     Console.WriteLine(" [x] Received {0}", message);
                 };
 
@@ -67,6 +73,21 @@ public class WorkerController : BackgroundService
             Console.WriteLine("bid complet");
    }
   }
+
+  public async Task validate(string? id, double? price)
+  {
+    Product product = productCollection.Find(c => c.Id.Equals(id)).FirstOrDefault();
+    if(price > product.Price)
+    {
+      _ilogger.LogInformation("A bid has been made");
+      product.Price = price;
+      productCollection.ReplaceOne(a => a.Id.Equals(id),product);
+    }
+    else 
+    {
+      _ilogger.LogInformation("Your bid is too low");
+    }
+  } 
   public void MakeBid( string? id,  double? price)
   { 
     Product product = productCollection.Find(c => c.Id.Equals(id)).FirstOrDefault();
