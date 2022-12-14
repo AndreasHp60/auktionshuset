@@ -23,7 +23,7 @@ public class WorkerController : BackgroundService
         var hostName = System.Net.Dns.GetHostName(); 
         var ips = System.Net.Dns.GetHostAddresses(hostName); 
         var _ipaddr = ips.First().MapToIPv4().ToString(); 
-        _logger.LogInformation(1, $"**********Worker responding from {_ipaddr}**********"); 
+        _ilogger.LogInformation(1, $"**********Worker responding from {_ipaddr}**********"); 
         //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
         MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
         database = dbClient.GetDatabase("Auktionshus");
