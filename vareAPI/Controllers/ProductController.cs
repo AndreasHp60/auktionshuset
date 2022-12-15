@@ -50,14 +50,12 @@ public class ProductController : ControllerBase
     return productDocument.ToList().Where(c => c.customer.Email.Equals(customerEmail)).FirstOrDefault();
   }
 
-  //skal tilrettes og optimeres.
-  //finally works!
-  //hvad skal kunne oprettes??
+  //skal testes i working system om den virker
   [HttpPost("CreateProduct")]
-  public void CreateProduct( Product product, string email, string name, string description, string category, double assesment, double minbid)
+  public void CreateProduct( Product product, string customerEmail, string name, string description, string category, double assesment, double minbid)
   {
       _ilogger.LogInformation($"**********Product{product.Name} has been created:**********");
-      Customer customers = customerCollection.Find(c => c.Email.Equals(email)).FirstOrDefault();
+      Customer customers = customerCollection.Find(c => c.Email.Equals(customerEmail)).FirstOrDefault();
       
       product = new Product(){
       Name = name, 
@@ -73,24 +71,28 @@ public class ProductController : ControllerBase
   }
 
 [HttpPut("updateProduct")]
-  public void updateProduct(Product product, string productName)
+  public void updateProduct( string productId, string name, string description, string category, double assesment, double price, double minbid, short state)
   {
-    //Hvis id er null fejler den
-    //Hvis man ikke indsætter id fejler den
-    //hvad skal man kunne opdatere?
+    Product product = productCollection.Find(c => c.Id.Equals(productId)).FirstOrDefault();
+    product.Name = name;
+    product.Price = price;
+    product.Description = description;
+    product.Category = category;
+    product.Assesment = assesment;
+    product.Price = price;
+    product.MinBid = minbid;
+    product.State = state;
+
     _ilogger.LogInformation($"**********Product{product.Name} have been updated:**********");
-    var newProduct = product;
-    product = productCollection.Find(c => c.Name.Equals(productName)).FirstOrDefault();
-    productCollection.ReplaceOne(c => c.Name.Equals(productName),newProduct);
+
+    productCollection.ReplaceOne(c => c.Id.Equals(productId),product);
   }
 
-  //tilret
   [HttpDelete("deleteProduct")]
-  public void deleteProduct(Product product, string productName)
+  public void deleteProduct( string id)
   {
-    _ilogger.LogInformation($"**********Product{product.Name} have been deleted:**********");
-    productCollection.DeleteOne(c => c.Name.Equals(productName));
+    _ilogger.LogInformation($"**********Product{id} have been deleted:**********");
+    productCollection.DeleteOne(c => c.Id.Equals(id));
   }
-
 
 }
