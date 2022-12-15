@@ -47,28 +47,53 @@ public Customer GetByEmail(string customerEmail)
     return document.Where(c => c.Email.Equals(customerEmail)).First();
   }
 
-[HttpPost("createcustomer")]
-public void CreateCustomer(Customer customer)
+[HttpPost("createCustomer")]
+public void CreateCustomer( string firstname, string lastname, string password, string email, string phonenumber, string address, short postal, string city, string country )
   {
-    _ilogger.LogInformation($"**********Customer{customer.FirstName} created:**********");
-      var newCustomer = customer;
-      collection.InsertOne(newCustomer);
+      var customer = new Customer()
+      {
+        FirstName = firstname,
+        LastName = lastname,
+        Password = password,
+        Email = email,
+        Phonenr = phonenumber,
+        Address = address,
+        Postal = postal,
+        City = city,
+        Country = country
+      };
+      collection.InsertOne(customer);
+      _ilogger.LogInformation($"**********Customer{customer.FirstName} created:**********");
   }
 
+
 [HttpPut("updateCustomer")]
-public void updateCustomer(Customer customer,string customerEmail)
+public void updateCustomer(string id, string firstname, string lastname, string password, string email, string phonenumber, string address, short postal, string city, string country)
   {
-    //hvis ikke man sletter eller ændrer id crasher den!
+    var customer = new Customer()
+      {
+        Id = id,
+        FirstName = firstname,
+        LastName = lastname,
+        Password = password,
+        Email = email,
+        Phonenr = phonenumber,
+        Address = address,
+        Postal = postal,
+        City = city,
+        Country = country
+      };
+      
     _ilogger.LogInformation($"**********Customer{customer.Email} have been updated:**********");
     var newCustomer = customer;
-    customer = collection.Find(c => c.Email.Equals(customerEmail)).FirstOrDefault();
-    collection.ReplaceOne(c => c.Email.Equals(customerEmail),newCustomer);
+    customer = collection.Find(c => c.Id.Equals(id)).FirstOrDefault();
+    collection.ReplaceOne(c => c.Id.Equals(id),newCustomer);
   }
 
 [HttpDelete("deleteCustomer")]
-public void deleteCustomer(string customerEmail)
+public void deleteCustomer(string id)
   {
-    _ilogger.LogInformation($"**********Customer{customerEmail} have been deleted:**********");
-    collection.DeleteOne(c => c.Email.Equals(customerEmail));
+    _ilogger.LogInformation($"**********Customer{id} have been deleted:**********");
+    collection.DeleteOne(c => c.Id.Equals(id));
   }
 }
