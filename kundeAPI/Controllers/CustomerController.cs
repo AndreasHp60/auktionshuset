@@ -4,6 +4,7 @@ using MongoDB.Bson;
 
 namespace CustomerService.Controllers;
 
+
 [ApiController]
 [Route("[controller]")]
 public class CustomerController : ControllerBase
@@ -48,11 +49,13 @@ public Customer GetByEmail(string customerEmail)
   }
 
 [HttpPost("createcustomer")]
-public void CreateCustomer(Customer customer)
+public Customer CreateCustomer(Customer customer)
   {
     _ilogger.LogInformation($"**********Customer{customer.FirstName} created:**********");
       var newCustomer = customer;
       collection.InsertOne(newCustomer);
+
+      return newCustomer;
   }
 
 [HttpPut("updateCustomer")]
