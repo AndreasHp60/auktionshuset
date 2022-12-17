@@ -28,10 +28,20 @@ public class MongoDBContext
         
         BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 
-        var client = new MongoClient(_config["MongoDBConct"]);
-        Database = client.GetDatabase(_config["Auktionshus"]);
+        // VI BRUGER IKKE CONFIG!!
+        
+        // var client = new MongoClient(_config["MongoDBConct"]);
+        // Database = client.GetDatabase(_config["DatabaseName"]);
+        // Collection = Database.GetCollection<Customer>("Collection");
+
+        var client = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
+        Database = client.GetDatabase("Auktionshus");
         Collection = Database.GetCollection<Customer>("User");
 
+        // MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
+        // database = dbClient.GetDatabase("Auktionshus");
+        // customerCollection = database.GetCollection<Customer>("User");
+        
         logger.LogInformation($"Connected to database {Database}");
         logger.LogInformation($"Using collection {Collection}");
     }

@@ -6,6 +6,8 @@ services:
      - "5672:5672"
      environment: 
       - MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test
+      - DatabaseName=Auktionshus
+      - Collection=User
   worker:
       image: marththecreater/auktionshuset:worker
       ports:
