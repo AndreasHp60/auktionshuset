@@ -30,10 +30,10 @@ public class WorkerController : BackgroundService
         customerCollection = database.GetCollection<Customer>("User");
         productCollection = database.GetCollection<Product>("Product");
     }
-
+    //Sequential convoy
      public void Receivebid(){
         _ilogger.LogDebug($"**********Starting bid**********");
-        var factory = new ConnectionFactory() { HostName = "rabbitmq-dev" };
+        var factory = new ConnectionFactory() { HostName = "rabbitmq-dev",DispatchConsumersAsync = true };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
@@ -44,7 +44,8 @@ public class WorkerController : BackgroundService
                                  autoDelete: false,
                                  arguments: null);
 
-            var consumer = new EventingBasicConsumer(channel);
+            //var consumer = new EventingBasicConsumer(channel);
+            var consumer = new AsyncEventingBasicConsumer(channel);
                 consumer.Received += async (model, ea) =>
                 {
                   _ilogger.LogDebug($"**********Processing bid{ea}**********");

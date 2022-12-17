@@ -5,6 +5,8 @@ services:
       - "8080:80" 
       environment: 
       - MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test
+      - DatabaseName=Auktionshus
+      - Collection=User
   product-service: 
       image: andreashp60/auktionshus:product
       ports:  

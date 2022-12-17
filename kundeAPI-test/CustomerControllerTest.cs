@@ -17,25 +17,7 @@ public class CustomerControllerTests
 
     private ILogger<CustomerController>? _logger = null;
     private IConfiguration? _configuration = null;
-    //readonly CustomerController controller;
-
-    private Customer CreateCustomer(string? Id)
-{
-    var customer = new Customer()
-    {
-        Id = null,
-        FirstName = "Test firstname",
-        LastName ="Test lastname",
-        Password ="Test password",
-        Email = "Test email",
-        Phonenr = "Test phonenr",
-        Address ="Test Address",
-        Postal = 2020,
-        City = "Test city",
-        Country = "Test country"
-    };
-    return customer;
-}
+    readonly CustomerController controller;
 
 
     [SetUp]
@@ -51,18 +33,16 @@ public class CustomerControllerTests
          _configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(myConfiguration)
             .Build();
-    
     }
 
     [Test]
-    public void Test1()
+    public async Task TestCreateCustomerEmptyPassword()
     {
-        var customer = new Customer()
+        Customer customer = new Customer()
             {
-                Id = "null",
                 FirstName = "Test firstname",
-                LastName ="Test lastname",
-                Password ="Test password",
+                LastName = "Test lastname",
+                Password = "",
                 Email = "Test email",
                 Phonenr = "Test phonenr",
                 Address ="Test Address",
@@ -70,26 +50,42 @@ public class CustomerControllerTests
                 City = "Test city",
                 Country = "Test country"
             };
-        var newCustomer = customer;
         // Arrange
-  {     //var _customer = new customer();
-        //var customerDTO = CreateCustomer(customer);
-        //var mockRepo = new Mock<CustomerController>();
-        //mockRepo.Setup(svc => svc.CreateCustomer(customerDTO)).Returns(Task.CompletedTask);
-        var controller = new CustomerController(_logger, _configuration);
+        var mockRepo = new Mock<ICustomerRepositoryService>().Object;     
+        var controller = new CustomerController(_logger, _configuration, mockRepo);
 
         // Act        
-        var result = controller.CreateCustomer(newCustomer);
-        var testID = result.Email;
+        var result = await controller.CreateCustomer(customer);
+        
         // Assert
-        Assert.AreEqual("Test email", testID);}
-    
-       /* try{
-            CreateCustomer();
-            Assert.IsTrue(true);
-        }
-        catch{
-            Assert.IsTrue(false);
-        }*/
+        Assert.IsNull(result);
+    }
+
+    [Test]
+    public async Task TestCreateCustomerNullPassword()
+    {
+        Customer customer = new Customer()
+            {
+                FirstName = "Test firstname",
+                LastName = "Test lastname",
+                Password = null,
+                Email = "Test email",
+                Phonenr = "Test phonenr",
+                Address ="Test Address",
+                Postal = 2020,
+                City = "Test city",
+                Country = "Test country"
+            };
+        // Arrange
+        var mockRepo = new Mock<ICustomerRepositoryService>().Object;     
+        var controller = new CustomerController(_logger, _configuration, mockRepo);
+
+        // Act        
+        var result = await controller.CreateCustomer(customer);
+        
+        Console.WriteLine($"customertest: {result}");
+        // Assert
+        Assert.IsNull(result);
+        
     }
 }

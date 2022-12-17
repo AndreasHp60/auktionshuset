@@ -16,6 +16,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<MongoDBContext>();
+builder.Services.AddSingleton<ICustomerRepositoryService,CustomerRepositoryService>();
 
 /*builder.Services.AddMvc()
                 .AddJsonOptions(options => options.SerializerSettings.Converters.Add(new BsonDocumentJsonConverter()));

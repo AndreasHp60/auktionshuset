@@ -1,0 +1,12 @@
+{
+    "id": null,
+    "firstName": "Henrik",
+    "lastName": "Jensen",
+    "password": "1234",
+    "email": "HNRK@eaaa.dk",
+    "phonenr": "+45 12345678",
+    "address": "aarhus",
+    "postal": 8000,
+    "city": "aarhus",
+    "country": "DK"
+  }

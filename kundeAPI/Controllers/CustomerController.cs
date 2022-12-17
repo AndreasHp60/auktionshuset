@@ -14,87 +14,70 @@ public class CustomerController : ControllerBase
     private readonly IConfiguration _config;
     private readonly IMongoDatabase database;
     private readonly IMongoCollection<Customer> collection;
+    private readonly ICustomerRepositoryService _repository;
 
-    public CustomerController(ILogger<CustomerController> logger, IConfiguration config)
+    public CustomerController(ILogger<CustomerController> logger, 
+    IConfiguration config, ICustomerRepositoryService repository)
     {
         _ilogger = logger;
         _config = config;
+        _repository = repository;
         var hostName = System.Net.Dns.GetHostName(); 
         var ips = System.Net.Dns.GetHostAddresses(hostName); 
         var _ipaddr = ips.First().MapToIPv4().ToString(); 
         _ilogger.LogDebug(1, $"**********CustomerController responding from {_ipaddr}**********");
 
-        //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
-        MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
-        database = dbClient.GetDatabase("Auktionshus");
-        collection = database.GetCollection<Customer>("User");
+        // //MongoClient dbClient = new MongoClient(_config["MongoDBConct"]);
+        // MongoClient dbClient = new MongoClient("mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test");
+        // database = dbClient.GetDatabase("Auktionshus");
+        // collection = database.GetCollection<Customer>("User");
+        // export MongoDBConct=mongodb+srv://auktionshus:jamesbond@auktionshus.aeg6tzo.mongodb.net/test
     }
 
 [HttpGet("GetCustomers")] 
-public List <Customer> Get() 
-  { 
-    _ilogger.LogInformation("**********Customers fetched**********");
-    var document = collection.Find(new BsonDocument()).ToList();
-    document.ToJson();
-    return document.ToList();
+public async Task<List<Customer>> Get() 
+  {
+      var result = await _repository.GetCustomers();
+      _ilogger.LogInformation("**********Customers fetched**********");
+      return result;
   }
 
-[HttpGet("GetCustomerByEmail")] 
-public Customer GetByEmail(string customerEmail) 
+[HttpGet("GetCustomerById")] 
+public async Task<Customer?> GetCustomer(string id) 
   { 
     _ilogger.LogInformation($"**********Customer fetched by email**********");
-    var document = collection.Find(new BsonDocument()).ToList();
-    document.ToJson();
-    return document.Where(c => c.Email.Equals(customerEmail)).First();
+    var result = await _repository.GetCustomer(id);
+    result.ToJson();
+    return result;
   }
 
 [HttpPost("createCustomer")]
-public void CreateCustomer( string firstname, string lastname, string password, string email, string phonenumber, string address, short postal, string city, string country )
+public async Task<Customer?> CreateCustomer( Customer customer )
   {
-      var customer = new Customer()
+
+      Console.WriteLine($"customer: {customer.Email}");
+      if(string.IsNullOrEmpty(customer.Email))
       {
-        FirstName = firstname,
-        LastName = lastname,
-        Password = password,
-        Email = email,
-        Phonenr = phonenumber,
-        Address = address,
-        Postal = postal,
-        City = city,
-        Country = country
-      };
-      collection.InsertOne(customer);
+        return null;
+      }
+      
+      var result = await _repository.CreateCustomer(customer);
       _ilogger.LogInformation($"**********Customer{customer.FirstName} created:**********");
+      return result;
   }
 
-
 [HttpPut("updateCustomer")]
-public void updateCustomer(string id, string firstname, string lastname, string password, string email, string phonenumber, string address, short postal, string city, string country)
+public async Task<Customer> updateCustomer( Customer customer)
   {
-    var customer = new Customer()
-      {
-        Id = id,
-        FirstName = firstname,
-        LastName = lastname,
-        Password = password,
-        Email = email,
-        Phonenr = phonenumber,
-        Address = address,
-        Postal = postal,
-        City = city,
-        Country = country
-      };
-      
-    _ilogger.LogInformation($"**********Customer{customer.Email} have been updated:**********");
-    var newCustomer = customer;
-    customer = collection.Find(c => c.Id.Equals(id)).FirstOrDefault();
-    collection.ReplaceOne(c => c.Id.Equals(id),newCustomer);
+       var result = await _repository.updateCustomer(customer);
+      _ilogger.LogInformation($"**********Customer{customer.Email} have been updated:**********");
+      return result;
   }
 
 [HttpDelete("deleteCustomer")]
-public void deleteCustomer(string id)
+public async Task<Customer> deleteCustomer(string id, Customer customer)
   {
-    _ilogger.LogInformation($"**********Customer{id} have been deleted:**********");
-    collection.DeleteOne(c => c.Id.Equals(id));
+    var result = await _repository.deleteCustomer(id, customer);
+    return result;
   }
 }
