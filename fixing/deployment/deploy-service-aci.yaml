@@ -1,0 +1,91 @@
+apiVersion: '2021-10-01'
+location: eastus
+name: auktionsHusetServicesGroup
+properties:
+  containers:
+  - name: worker
+    properties:
+      image: marththecreater/auktionshuset:worker
+      environmentVariables:
+      - name: 'ASPNETCORE_URLS'
+        value: '80'
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 80
+      volumeMounts:
+      - mountPath: xXx
+        name: images
+  - name: gateway
+    properties:
+      image: nginx:latest
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 1.0
+      ports:
+      - port: 4000
+      volumeMounts:
+      - mountPath: /etc/nginx/
+        name: config
+  - name: auktionsapi
+    properties:
+      image: marththecreater/auktionshuset:auktionsapi
+      environmentVariables:
+      - name: 'ASPNETCORE_URLS'
+        value: '81'
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 81
+  - name: kundeAPI
+    properties:
+      image: marththecreater/auktionshuset:customer
+      environmentVariables:
+      - name: 'ASPNETCORE_URLS'
+        value: '82'
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 82
+  - name: vareAPI
+    properties:
+      image: marththecreater/auktionshuset:product
+      environmentVariables:
+      - name: 'ASPNETCORE_URLS'
+        value: '83'
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 83
+  dnsConfig:
+    nameServers:
+    - 10.0.0.10 # DNS Server 1
+    - 10.0.0.11 # DNS Server 2
+    searchDomains: auktionshuset.dk
+  subnetIds:
+    - id: "/subscriptions/0c13849d-5305-4aa0-a69b91848a997980/resourceGroups/AuktionsHusetRG/providers/Microsoft.Network/virtualNet
+works/aci-vnet/subnets/auktionshuset_service_subnet"
+  ipAddress:
+      type: Private
+      ports:
+      - protocol: tcp
+        port: 4000
+  osType: Linux
+  restartPolicy: Always
+  volumes:
+  - name: config
+    azureFile:
+      sharename: config
+      storageAccountName: auktionstoreg6
+      storageAccountKey: Wae+Z9ZWRlCYk9FDQn1MyMPAHU9pSEQqFPzS6nH+r3xbrOBV0vH9BG2bokxToLRgx0dbVAZfwwtS+AStkHRpFg==
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
