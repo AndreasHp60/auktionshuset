@@ -33,7 +33,7 @@ public class WorkerController : BackgroundService
     //Sequential convoy
      public void Receivebid(){
         _ilogger.LogDebug($"**********Starting bid**********");
-        var factory = new ConnectionFactory() { HostName = "rabbitmq-dev",DispatchConsumersAsync = true };
+        var factory = new ConnectionFactory() { HostName = "backend",DispatchConsumersAsync = true };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {

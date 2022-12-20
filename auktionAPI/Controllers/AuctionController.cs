@@ -61,12 +61,12 @@ public class AuctionController : ControllerBase
   }
 
   [HttpPost("Sendbid")]
-  public void Sendbid(string idd, double pricee){
+  public void Sendbid(string id, double price){
         var productdto = new Productdto(){
-          Id = idd,
-          Price = pricee
+          Id = id,
+          Price = price
         };
-        var factory = new ConnectionFactory() { HostName = "rabbitmq-dev" };
+        var factory = new ConnectionFactory() { HostName = "backend" };
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         
