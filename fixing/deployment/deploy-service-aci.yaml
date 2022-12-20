@@ -8,16 +8,13 @@ properties:
       image: marththecreater/auktionshuset:worker
       environmentVariables:
       - name: 'ASPNETCORE_URLS'
-        value: '80'
+        value: 'http://localhost:81'
       resources:
         requests:
           cpu: 0.5
           memoryInGb: 0.5
       ports:
-      - port: 80
-      volumeMounts:
-      - mountPath: xXx
-        name: images
+      - port: 81
   - name: gateway
     properties:
       image: nginx:latest
@@ -35,45 +32,44 @@ properties:
       image: marththecreater/auktionshuset:auktionsapi
       environmentVariables:
       - name: 'ASPNETCORE_URLS'
-        value: '81'
-      resources:
-        requests:
-          cpu: 0.5
-          memoryInGb: 0.5
-      ports:
-      - port: 81
-  - name: kundeAPI
-    properties:
-      image: marththecreater/auktionshuset:customer
-      environmentVariables:
-      - name: 'ASPNETCORE_URLS'
-        value: '82'
+        value: 'http://localhost:82'
       resources:
         requests:
           cpu: 0.5
           memoryInGb: 0.5
       ports:
       - port: 82
-  - name: vareAPI
+  - name: kundeapi
     properties:
-      image: marththecreater/auktionshuset:product
+      image: marththecreater/auktionshuset:customer
       environmentVariables:
       - name: 'ASPNETCORE_URLS'
-        value: '83'
+        value: 'http://localhost:83'
       resources:
         requests:
           cpu: 0.5
           memoryInGb: 0.5
       ports:
       - port: 83
+  - name: vareapi
+    properties:
+      image: marththecreater/auktionshuset:product
+      environmentVariables:
+      - name: 'ASPNETCORE_URLS'
+        value: 'http://localhost:84'
+      resources:
+        requests:
+          cpu: 0.5
+          memoryInGb: 0.5
+      ports:
+      - port: 84
   dnsConfig:
     nameServers:
     - 10.0.0.10 # DNS Server 1
     - 10.0.0.11 # DNS Server 2
     searchDomains: auktionshuset.dk
   subnetIds:
-    - id: "/subscriptions/0c13849d-5305-4aa0-a69b91848a997980/resourceGroups/AuktionsHusetRG/providers/Microsoft.Network/virtualNet
-works/aci-vnet/subnets/auktionshuset_service_subnet"
+    - id: "/subscriptions/b5f7f79d-e8c7-4626-9df4-f8e03f9ebf77/resourceGroups/AuktionsHusetG6RG/providers/Microsoft.Network/virtualNetworks/auktionshusetG6VNET/subnets/auktionshuset_services_subnet"
   ipAddress:
       type: Private
       ports:
