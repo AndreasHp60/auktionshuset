@@ -67,7 +67,7 @@ properties:
     nameServers:
     - 10.0.0.10 # DNS Server 1
     - 10.0.0.11 # DNS Server 2
-    searchDomains: auktionshuset.dk
+    searchDomains: auktionshusetg6.dk
   subnetIds:
     - id: "/subscriptions/b5f7f79d-e8c7-4626-9df4-f8e03f9ebf77/resourceGroups/AuktionsHusetG6RG/providers/Microsoft.Network/virtualNetworks/auktionshusetG6VNET/subnets/auktionshuset_services_subnet"
   ipAddress:
