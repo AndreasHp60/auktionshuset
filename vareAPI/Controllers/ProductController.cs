@@ -52,12 +52,12 @@ public class ProductController : ControllerBase
 
   //skal testes i working system om den virker
   [HttpPost("CreateProduct")]
-  public void CreateProduct( Product product, string customerEmail, string name, string description, string category, double assesment, double minbid)
+  public void CreateProduct( [FromBody]Product product, [FromQuery]string customerEmail/*, string name, string description, string category, double assesment, double minbid*/)
   {
       _ilogger.LogInformation($"**********Product{product.Name} has been created:**********");
       Customer customers = customerCollection.Find(c => c.Email.Equals(customerEmail)).FirstOrDefault();
       
-      product = new Product(){
+      /*product = new Product(){
       Name = name, 
       Description = description, 
       Category = category, 
@@ -65,8 +65,9 @@ public class ProductController : ControllerBase
       Price = 0, 
       MinBid = minbid,
       State = 1, 
-      customer = customers};
+      customer = customers};*/
       
+      product.customer=customers;
       productCollection.InsertOne(product);
   }
 
